@@ -8,8 +8,6 @@
 - Производство юнитов в бараках за ресурсы  
 
 
-[видео с демонстрацией проекта](https://www.youtube.com/watch?v=K-fZKGflfZY&t=2s)
-
 Реализованные технологии:
 - Система пулов для всех игровых объектов
 - Минимум монобехов (1 на все системы и по 1 для каждой сущности)
@@ -19,5 +17,5 @@
 - Управление игрока через New Input System
 - Перемещение юнитов через NavMesh
 
-
-
+[видео с демонстрацией проекта](https://www.youtube.com/watch?v=K-fZKGflfZY&t=2s)  
+[скачать билд](https://drive.google.com/file/d/1uuD7wIGscgl1ziWCO8m5WUvK99mIKg3R/view?usp=drive_link)
