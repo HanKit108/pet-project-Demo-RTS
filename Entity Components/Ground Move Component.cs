@@ -7,16 +7,17 @@ public class GroundMoveComponent : BaseConditionComponent,
     IComponent, IMovable, ICollisiable, IUpdatable, 
     IDisposable, ISwitchable, IEnable, IDisable
 {
-    private const float MIN_SPEED = 3f;
-
     [SerializeField]
     private float _moveSpeed;
     private NavMeshAgent _agent;
     private Action _enableAction, _disableAction;
+    private bool _isMoving;
 
-    public GroundMoveComponent(Transform owner, float moveSpeed)
+    public float MoveSpeed => _moveSpeed;
+
+    public GroundMoveComponent(Transform owner, float moveSpeed, string name)
     {
-        _name = "Ground Move Component";
+        _name = name;
 
         _moveSpeed = moveSpeed;
         if (!owner.gameObject.TryGetComponent(out _agent))
@@ -71,7 +72,7 @@ public class GroundMoveComponent : BaseConditionComponent,
     {
         if (_agent != null)
         {
-            return _agent.velocity.magnitude > MIN_SPEED;
+            return _agent.velocity.magnitude > Constants.MIN_MOVE_SPEED;
         }
         return false;
     }
@@ -89,6 +90,7 @@ public class GroundMoveComponent : BaseConditionComponent,
                 _agent.isStopped = true;
             }
         }
+        _isMoving = IsMoving();
     }
 
     public void Dispose()
@@ -113,17 +115,17 @@ public class GroundMoveComponent : BaseConditionComponent,
 
 public class GroundMoveComponentCreator : BaseMoveComponentCreator, IComponentCreator
 {
+    private const string GROUND_MOVE_COMPONENT_NAME = "Ground Moving Component";
+
     public GroundMoveComponentCreator()
     {
-        _name = "Ground Moving Component";
+        _name = GROUND_MOVE_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        GroundMoveComponent moving = new GroundMoveComponent(entity.transform, _moveSpeed);
+        GroundMoveComponent moving = new GroundMoveComponent(entity.transform, _moveSpeed, _name);
         TrySetLifeEvents(entity, moving);
-        TryAddAttackCondition(entity, moving);
-        TryAddAnimation(entity, moving.IsMoving);
         entity.Add(moving);
     }
 }

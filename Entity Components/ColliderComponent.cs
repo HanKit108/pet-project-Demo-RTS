@@ -5,9 +5,9 @@ public class ColliderComponent : BaseComponent, IComponent, IDisposable
     private Pool _pool;
     private Transform _transform;
     
-    public ColliderComponent(Transform owner)
+    public ColliderComponent(Transform owner, string name)
     {
-        _name = "Collider Component";
+        _name = name;
 
         _pool = ServiceLocator.GetService<PoolsContainer>().GetColliderPool();
         _transform = (Transform)_pool.Take();
@@ -23,14 +23,16 @@ public class ColliderComponent : BaseComponent, IComponent, IDisposable
 
 public class ColliderComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string COLLIDER_COMPONENT_NAME = "Collider Component";
+
     public ColliderComponentCreator()
     {
-        _name = "Collider Component";
+        _name = COLLIDER_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        ColliderComponent collider = new ColliderComponent(entity.transform);
+        ColliderComponent collider = new ColliderComponent(entity.transform, _name);
         entity.Add(collider);
     }
 }

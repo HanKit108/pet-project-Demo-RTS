@@ -6,9 +6,8 @@ using UnityEngine;
 public class UnitControlComponent : BaseComponent, 
     IComponent, IUpdatable, IUnitControl, IEnable, IDisable, IDisposable
 {
-    private const string UNIT_LAYER = "Unit";
     [SerializeField, HideInInspector]
-    private LayerMask _unitLayer = LayerMask.GetMask(UNIT_LAYER);
+    private LayerMask _unitLayer = LayerMask.GetMask(Constants.UNIT_LAYER_NAME);
     [SerializeField, HideInInspector]
     private Entity _owner, _target;
     [SerializeField]
@@ -35,9 +34,9 @@ public class UnitControlComponent : BaseComponent,
     public Vector3 TargetPosition => _targetPosition;
     public Entity Target => _target;
 
-    public UnitControlComponent(Entity owner)
+    public UnitControlComponent(Entity owner, string name)
     {
-        _name = "Unit Control Component";
+        _name = name;
         _owner = owner;
 
         _stateMachine = new StateMachine();
@@ -261,18 +260,16 @@ public class UnitControlComponent : BaseComponent,
 
 public class UnitControlComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string UNIT_CONTROL_COMPONENT_NAME = "Unit Control Component";
+
     public UnitControlComponentCreator()
     {
-        _name = "Unit Control Component";
+        _name = UNIT_CONTROL_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        UnitControlComponent control = new UnitControlComponent(entity);
+        UnitControlComponent control = new UnitControlComponent(entity, _name);
         entity.Add(control);
-        if (entity.TryGetComponent<AnimationComponent>(out var component))
-        {
-            component.Add(IDLE, ref control.OnStop);
-        }
     }
 }

@@ -5,22 +5,20 @@ using UnityEngine;
 public class SelectComponent : BaseComponent, 
     IComponent, IDisposable, ISwitchable
 {
-    private const float VERTICAL_OFFSET = 0.1f;
-
     private Transform _transform, _owner;
     private Action _enableAction, _disableAction;
     private Pool _pool;
 
     public Action OnSelected, OnDeselected;
 
-    public SelectComponent(Transform owner)
+    public SelectComponent(Transform owner, string name)
     {
-        _name = "Select Component";
+        _name = name;
 
         _owner = owner;
         _pool = ServiceLocator.GetService<PoolsContainer>().GetSelectionPool();
         _transform = (Transform)_pool.Take();
-        _transform.position = _owner.position + Vector3.up * VERTICAL_OFFSET;
+        _transform.position = _owner.position + Vector3.up * Constants.SELECTION_VERTICAL_OFFSET;
         _transform.parent = _owner;
         Deselect();
     }
@@ -78,14 +76,16 @@ public class SelectComponent : BaseComponent,
 
 public class SelectComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string ROTATE_COMPONENT_NAME = "Select Component";
+
     public SelectComponentCreator()
     {
-        _name = "Select Component";
+        _name = ROTATE_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        SelectComponent selection = new SelectComponent(entity.transform);
+        SelectComponent selection = new SelectComponent(entity.transform, _name);
         TrySetLifeEvents(entity, selection);
         entity.Add(selection);
     }

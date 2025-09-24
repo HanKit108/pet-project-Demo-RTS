@@ -4,17 +4,14 @@ using UnityEngine;
 [Serializable]
 public class RotateComponent: BaseConditionComponent, IComponent, IRotatable
 {
-    private const float ROTATE_SPEED_MULTIPLUER = 100f;
-    private const float MAX_ATTACK_ANGLE = 5f;
-
     [SerializeField, HideInInspector]
     private Transform _transform, _targetTransform;
     [SerializeField]
     private float _rotateSpeed;
 
-    public RotateComponent()
+    public RotateComponent(string name)
     {
-        _name = "Rotate Component";
+        _name = name;
     }
 
     public void Initialize(Transform transform, float rotateSpeed)
@@ -29,13 +26,34 @@ public class RotateComponent: BaseConditionComponent, IComponent, IRotatable
         if (_compositeConditions.Invoke())
         {
             Quaternion target = Quaternion.LookRotation(targetTransform.position - _transform.position, _transform.up);
-            float step = deltaTime * _rotateSpeed * ROTATE_SPEED_MULTIPLUER;
+            float step = deltaTime * _rotateSpeed * Constants.ROTATE_SPEED_MULTIPLUER;
             _transform.rotation = Quaternion.RotateTowards(_transform.rotation, target, step);
         }
     }
 
     public bool IsAimed()
     {
-        return Vector3.Angle(_transform.forward, _targetTransform.position - _transform.position) < MAX_ATTACK_ANGLE;
+        return Vector3.Angle(_transform.forward, _targetTransform.position - _transform.position) < Constants.MAX_ATTACK_ANGLE;
+    }
+}
+
+public class RotateComponentCreator : BaseComponentCreator, IComponentCreator
+{
+    private const string ROTATE_COMPONENT_NAME = "Rotate component";
+
+    [SerializeField, Min(0f)]
+    protected float _rotationSpeed;
+
+    public RotateComponentCreator()
+    {
+        _name = ROTATE_COMPONENT_NAME;
+    }
+
+    public void CreateComponent(Entity entity)
+    {
+        RotateComponent rotation = new RotateComponent(_name);
+        rotation.Initialize(entity.transform, _rotationSpeed);
+        TryAddDeathCondition(entity, rotation);
+        entity.Add(rotation);
     }
 }

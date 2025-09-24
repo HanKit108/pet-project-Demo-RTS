@@ -9,9 +9,9 @@ public class BuildingCollisionComponent : BaseComponent,
     private Action _enableAction, _disableAction;
     private NavMeshObstacle _obstacle;
 
-    public BuildingCollisionComponent(Transform owner)
+    public BuildingCollisionComponent(Transform owner, string name)
     {
-        _name = "Building Collision Component";
+        _name = name;
         if (!owner.gameObject.TryGetComponent(out _obstacle))
         {
             _obstacle = owner.gameObject.AddComponent<NavMeshObstacle>();
@@ -46,14 +46,16 @@ public class BuildingCollisionComponent : BaseComponent,
 
 public class BuildingCollisionComponentCreator : BaseCollisionComponentCreator, IComponentCreator
 {
+    private const string BUILDING_COLLISION_COMPONENT_NAME = "Building Collision Component";
+
     public BuildingCollisionComponentCreator()
     {
-        _name = "Building Collision Component";
+        _name = BUILDING_COLLISION_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        BuildingCollisionComponent building = new BuildingCollisionComponent(entity.transform);
+        BuildingCollisionComponent building = new BuildingCollisionComponent(entity.transform, _name);
         TrySetLifeEvents(entity, building);
         entity.Add(building);
     }

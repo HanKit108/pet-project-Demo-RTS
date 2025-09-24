@@ -40,9 +40,9 @@ public class HealthComponent: BaseComponent, IComponent, IDamagable, IDisposable
     public Action OnDied;
     public Action OnRevived;
 
-    public HealthComponent(float maxHealthAmount, float restoration)
+    public HealthComponent(float maxHealthAmount, float restoration, string name)
     {
-        _name = "Health Component";
+        _name = name;
         _maxHealthAmount = maxHealthAmount;
         _currentHealthAmount = _maxHealthAmount;
         _restorationAmount = restoration;
@@ -123,17 +123,18 @@ public class HealthComponent: BaseComponent, IComponent, IDamagable, IDisposable
 }
 public class HealthComponentCreator : BaseHealthComponentCreator, IComponentCreator
 {
+    private const string HEALTH_COMPONENT_NAME = "Health Component";
+
     [SerializeField]
     private float _maxHitPoints, _restoration;
     public HealthComponentCreator()
     {
-        _name = "Health Component";
+        _name = HEALTH_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        HealthComponent health = new HealthComponent(_maxHitPoints, _restoration);
-        TryAddAnimation(entity, ref health.OnRevived, ref health.OnDied);
+        HealthComponent health = new HealthComponent(_maxHitPoints, _restoration, _name);
         health.OnDied += () => ServiceLocator.GetService<EntityDisposer>().DelayedDispose(entity);
         entity.Add(health);
     }

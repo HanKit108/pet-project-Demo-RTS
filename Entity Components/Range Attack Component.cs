@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class RangeAttackComponent : BaseAttackComponent
 {
-    private const float VERTICAL_OFFSET = 1f;
-
     [SerializeField]
     private float _projectileSpeed;
     private Transform _projectilePrefab;
@@ -15,9 +13,10 @@ public class RangeAttackComponent : BaseAttackComponent
         float attackDelay,
         Transform transform,
         float projectileSpeed,
-        Transform projectilePrefab) 
+        Transform projectilePrefab,
+        string name) 
     {
-        _name = "Range Attack Component";
+        _name = name;
 
         _damage = damage;
         _cooldown = cooldown;
@@ -41,7 +40,7 @@ public class RangeAttackComponent : BaseAttackComponent
                 _target,
                 _damage,
                 _projectileSpeed,
-                VERTICAL_OFFSET
+                Constants.PROJECTILE_START_VERTICAL_OFFSET
                 );
         }
     }
@@ -50,6 +49,8 @@ public class RangeAttackComponent : BaseAttackComponent
 public class RangeAttackComponentCreator : BaseAttackComponentCreator,
     IComponentCreator
 {
+    private const string RANGE_ATTACK_COMPONENT_NAME = "Range Attack Component";
+
     [SerializeField]
     private float _projectileSpeed;
     [SerializeField]
@@ -57,7 +58,7 @@ public class RangeAttackComponentCreator : BaseAttackComponentCreator,
 
     public RangeAttackComponentCreator()
     {
-        _name = "Range Attack Component";
+        _name = RANGE_ATTACK_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
@@ -68,13 +69,11 @@ public class RangeAttackComponentCreator : BaseAttackComponentCreator,
             _attackDelay,
             entity.transform,
             _projectileSpeed,
-            _projectilePrefab);
-        if (_needAiming)
-        {
-            TryAddAimingCondition(entity, attack);
-        }
+            _projectilePrefab,
+            _name);
+        TryAddAimingCondition(entity, attack);
+        TryAddMoveCondition(entity, attack);
         TryAddDeathCondition(entity, attack);
-        TryAddAnimation(entity, ref attack.OnAttack);
         entity.Add(attack);
     }
 }

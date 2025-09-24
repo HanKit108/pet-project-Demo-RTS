@@ -6,9 +6,9 @@ public class EntitySquadSpawnComponent : BaseConditionComponent, IComponent
     private Entity _owner;
     private EntityGroupSO _entitySquad;
 
-    public EntitySquadSpawnComponent(Entity owner, EntityGroupSO entitySquad)
+    public EntitySquadSpawnComponent(Entity owner, EntityGroupSO entitySquad, string name)
     {
-        _name = "Spawner Component";
+        _name = name;
         _owner = owner;
         _entitySquad = entitySquad;
     }
@@ -29,16 +29,18 @@ public class EntitySquadSpawnComponent : BaseConditionComponent, IComponent
 
 public class SpawnerComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string SPAWNER_COMPONENT_NAME = "Spawner Component";
+    
     [SerializeField]
     private EntityGroupSO _entitySquad;
 
     public SpawnerComponentCreator()
     {
-        _name = "Spawner Component";
+        _name = SPAWNER_COMPONENT_NAME;
     }
     public void CreateComponent(Entity entity)
     {
-        EntitySquadSpawnComponent spawner = new EntitySquadSpawnComponent(entity, _entitySquad);
+        EntitySquadSpawnComponent spawner = new EntitySquadSpawnComponent(entity, _entitySquad, _name);
 
         TryAddDeathCondition(entity, spawner);
 

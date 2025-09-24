@@ -10,9 +10,9 @@ public class TeamComponent: BaseComponent, IComponent
 
     public Action<Color> OnTeamChanged;
 
-    public TeamComponent()
+    public TeamComponent(string name)
     {
-        _name = "Team Component";
+        _name = name;
     }
 
     public void SetTeam(TeamSO team)
@@ -24,14 +24,16 @@ public class TeamComponent: BaseComponent, IComponent
 
 public class TeamComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string TEAM_COMPONENT_NAME = "Team Component";
+
     public TeamComponentCreator()
     {
-        _name = "Team Component";
+        _name = TEAM_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        TeamComponent team = new TeamComponent();
+        TeamComponent team = new TeamComponent(_name);
         entity.Add(team);
     }
 }

@@ -5,8 +5,6 @@ using UnityEngine.UI;
 public class PointsBarComponent : BaseComponent, 
     IComponent, IDisposable, ILateUpdatable
 {
-    private const float VERTICAL_OFFSET = 2f;
-
     [SerializeField, HideInInspector]
     private Image _imageBar;
     [SerializeField, HideInInspector]
@@ -19,13 +17,13 @@ public class PointsBarComponent : BaseComponent,
     private Action<Color> _onColorChangedAction;
     private Pool _barPool, _canvasPool;
 
-    public PointsBarComponent(Transform owner)
+    public PointsBarComponent(Transform owner, string name)
     {
-        _name = "Points Bar Component";
+        _name = name;
 
         _canvasPool = ServiceLocator.GetService<PoolsContainer>().GetCanvasPool();
         _canvas = (Transform)_canvasPool.Take();
-        _canvas.position = owner.position + Vector3.up * VERTICAL_OFFSET;
+        _canvas.position = owner.position + Vector3.up * Constants.POINTS_BAR_VERTICAL_OFFSET;
         _canvas.parent = owner;
 
         _barPool = ServiceLocator.GetService<PoolsContainer>().GetBarPool();
@@ -120,9 +118,11 @@ public class PointsBarComponent : BaseComponent,
 
 public class PointsBarComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string POINTS_BAR_COMPONENT_NAME = "Points Bar Component";
+
     public PointsBarComponentCreator()
     {
-        _name = "Points Bar Component";
+        _name = POINTS_BAR_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
@@ -130,7 +130,7 @@ public class PointsBarComponentCreator : BaseComponentCreator, IComponentCreator
         if (entity.TryGetComponent<HealthComponent>(out var health))
         {
             PointsBarComponent points = new PointsBarComponent(
-                       entity.transform);
+                       entity.transform, _name);
             points.SetAmountChangeEvents(
                 ref health.OnHealthAmountChanged,
                 ref health.OnMaxHealthAmountChanged,

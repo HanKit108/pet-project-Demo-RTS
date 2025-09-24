@@ -13,9 +13,9 @@ public class IncomeComponent : BaseConditionComponent,
     private TickTimer _timer;
     private Action _enableAction, _disableAction;
 
-    public IncomeComponent(int incomeAmount, float incomeDelay)
+    public IncomeComponent(int incomeAmount, float incomeDelay, string name)
     {
-        _name = "Income Component";
+        _name = name;
         _incomeAmount = incomeAmount;
         _incomeDelay = incomeDelay;
         _timer = ServiceLocator.GetService<TimerSystem>().CreateTickTimer(_incomeDelay, EarnResourse);
@@ -55,6 +55,8 @@ public class IncomeComponent : BaseConditionComponent,
 
 public class IncomeComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string INCOME_COMPONENT_NAME = "Income Component";
+
     [SerializeField, Min(0)]
     private int _incomeAmount;
     [SerializeField, Min(0)]
@@ -62,12 +64,12 @@ public class IncomeComponentCreator : BaseComponentCreator, IComponentCreator
 
     public IncomeComponentCreator()
     {
-        _name = "Income Component";
+        _name = INCOME_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        IncomeComponent income = new IncomeComponent(_incomeAmount, _incomeDelay);
+        IncomeComponent income = new IncomeComponent(_incomeAmount, _incomeDelay, _name);
         TrySetLifeEvents(entity, income);
         entity.Add(income);
     }

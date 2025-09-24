@@ -10,9 +10,9 @@ public class ProductionMenuComponent: BaseComponent,
     private Action<Sprite> _onEnqueued;
     private bool _isSelected;
 
-    public ProductionMenuComponent(EntityProductionComponent production)
+    public ProductionMenuComponent(EntityProductionComponent production, string name)
     {
-        _name = "Production Menu Component";
+        _name = name;
         _production = production;
 
         production.OnEnqueued  += OnEnqueued;
@@ -81,16 +81,18 @@ public class ProductionMenuComponent: BaseComponent,
 
 public class ProductionMenuComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string PRODUCTION_MENU_COMPONENT_NAME = "Production Menu Component";
+
     public ProductionMenuComponentCreator()
     {
-        _name = "Production Menu Component";
+        _name = PRODUCTION_MENU_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
         if (entity.TryGetComponent<EntityProductionComponent>(out var production))
         {
-            ProductionMenuComponent menu = new ProductionMenuComponent(production);
+            ProductionMenuComponent menu = new ProductionMenuComponent(production, _name);
             TrySetSelectionEvents(entity, menu);
             entity.Add(menu);
         }

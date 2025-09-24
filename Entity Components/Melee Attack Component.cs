@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class MeleeAttackComponent : BaseAttackComponent
@@ -6,9 +7,10 @@ public class MeleeAttackComponent : BaseAttackComponent
         float cooldown,
         float attackRange,
         float attackDelay,
-        Transform transform)
+        Transform transform,
+        string name)
     {
-        _name = "Melee Attack Component";
+        _name = name;
         _damage = damage;
         _cooldown = cooldown;
         _attackRange = attackRange;
@@ -28,9 +30,11 @@ public class MeleeAttackComponent : BaseAttackComponent
 
 public class MeleeAttackComponentCreator : BaseAttackComponentCreator, IComponentCreator
 {
+    private const string MELEE_ATTACK_COMPONENT_NAME = "Melee Attack Component";
+
     public MeleeAttackComponentCreator()
     {
-        _name = "Melee Attack Component";
+        _name = MELEE_ATTACK_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
@@ -40,13 +44,11 @@ public class MeleeAttackComponentCreator : BaseAttackComponentCreator, IComponen
             _cooldown,
             _attackRange,
             _attackDelay,
-            entity.transform);
-        if (_needAiming)
-        {
-            TryAddAimingCondition(entity, attack);
-        }
+            entity.transform,
+            _name);
+        TryAddAimingCondition(entity, attack);
+        TryAddMoveCondition(entity, attack);
         TrySetLifeEvents(entity, attack);
-        TryAddAnimation(entity, ref attack.OnAttack);
         entity.Add(attack);
     }
 }

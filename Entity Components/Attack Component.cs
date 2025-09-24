@@ -10,7 +10,7 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
     private Timer _timer;
 
     protected IDamagable _target;
-    protected bool _canAttack = true, _isAttack = false;
+    protected bool _canAttack = true, _isPreparationAttack = false, _isAttack;
     [SerializeField]
     protected float _attackRange, _attackDelay, _cooldown, _damage;
     [SerializeField, HideInInspector]
@@ -18,6 +18,9 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
 
 
     public Action OnAttack;
+    public Action<Entity, Entity> OnDamaged;
+
+    public float AttackDelay => _attackDelay;
 
     public void Initialize(Transform transform)
     {
@@ -44,6 +47,16 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
         _timer?.Pause();
     }
 
+    public void AddDamage(float amount)
+    {
+        _damage += amount;
+    }
+
+    public void RemoveDamage(float amount)
+    {
+        _damage -= amount;
+    }
+
     public bool TryAttack(IDamagable target, Transform targetTransform)
     {
         _target = target;
@@ -58,6 +71,7 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
         if (CanAttack())
         {
             OnAttack?.Invoke();
+            _isPreparationAttack = true;
             _isAttack = true;
             _timer = ServiceLocator.GetService<TimerSystem>().CreateTimer(_attackDelay, CompleteAttack);
             return true;
@@ -71,9 +85,14 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
         return Vector3.Distance(_transform.position, targetPosition) <= _attackRange;
     }
 
-    public bool IsNotAttack()
+    public bool IsNotPreparationAttack()
     {
-        return !_isAttack;
+        return !_isPreparationAttack;
+    }
+
+    public bool IsAttack()
+    {
+        return _isAttack;
     }
 
     public IDamagable GetDamagable()
@@ -89,6 +108,7 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
     {
         _target = null;
         _targetTransform = null;
+        _isPreparationAttack = false;
         _isAttack = false;
         if (_canAttack)
         {
@@ -104,12 +124,12 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
 
     protected virtual void CompleteAttack()
     {
-        _isAttack = false;
+        _isPreparationAttack = false;
+        ServiceLocator.GetService<TimerSystem>().CreateTimer(_attackDelay, () => _isAttack = false);
         if (_target != null && _compositeConditions.Invoke())
         {
             _canAttack = false;
             _timer = ServiceLocator.GetService<TimerSystem>().CreateTimer(_cooldown, RefreshAttack);
-
         }
     }
 
@@ -122,7 +142,7 @@ public abstract class BaseAttackComponent : BaseConditionComponent,
     {
         return _compositeConditions.Invoke() &&
                 _enabled &&
-                !_isAttack &&
+                !_isPreparationAttack &&
                 _canAttack &&
                 IsAttackRange(_targetTransform.position);
     }

@@ -17,9 +17,9 @@ public class EntityProductionComponent : BaseConditionComponent,
     public Action OnDequeued;
     public Action<Sprite> OnEnqueued;
 
-    public EntityProductionComponent(Entity owner)
+    public EntityProductionComponent(Entity owner, string name)
     {
-        _name = "Entity Production Component";
+        _name = name;
         _owner = owner;
     }
 
@@ -79,10 +79,6 @@ public class EntityProductionComponent : BaseConditionComponent,
             OnEnqueued?.Invoke(entityConfigSO.Icon);
             TryStartProduction();
         }
-        else
-        {
-            Debug.Log("Not enough resourse");
-        }
     }
 
     private void TryStartProduction()
@@ -119,17 +115,19 @@ public class EntityProductionComponent : BaseConditionComponent,
 
 public class ProductionComponentCreator : BaseComponentCreator, IComponentCreator
 {
+    private const string ENTITY_PRODUCTION_COMPONENT_NAME = "Entity Production Component";
+
     [SerializeField]
     private List<EntityConfigSO> _producedEntities = new();
 
     public ProductionComponentCreator()
     {
-        _name = "Entity Production Component";
+        _name = ENTITY_PRODUCTION_COMPONENT_NAME;
     }
 
     public void CreateComponent(Entity entity)
     {
-        EntityProductionComponent production = new EntityProductionComponent(entity);
+        EntityProductionComponent production = new EntityProductionComponent(entity, _name);
 
         foreach (EntityConfigSO entityConfig in _producedEntities)
         {
