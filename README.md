@@ -20,4 +20,4 @@
 - Перемещение юнитов через NavMesh
 
 [видео с демонстрацией проекта](https://www.youtube.com/watch?v=K-fZKGflfZY&t=2s)  
-[скачать билд](HanKit108/RTS_project)
+[скачать билд]([HanKit108/RTS_project](https://drive.google.com/file/d/1Ymu9cB1FptkkLQps1QTwj8Vygl9iQney/view?usp=drive_link))
