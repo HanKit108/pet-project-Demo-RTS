@@ -4,8 +4,6 @@ using UnityEngine;
 [Serializable]
 public class BaseComponentCreator
 {
-    protected const string IDLE = "Idle Animation";
-
     [SerializeField, HideInInspector]
     protected string _name;
 
