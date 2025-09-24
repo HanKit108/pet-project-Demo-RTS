@@ -105,3 +105,8 @@ public interface IDisposable
 {
     public void Dispose();
 }
+
+public interface IValidate
+{
+    public void OnValidate();
+}
